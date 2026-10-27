@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indicadores do Brasil | Ao vivo</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --card: #1a1f26;
+    --border: #2a3038;
+    --text: #e7e9ea;
+    --muted: #8b98a5;
+    --accent: #1d9bf0;
+    --green: #00ba7c;
+    --red: #f4212e;
+    --yellow: #ffd400;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 24px 16px 48px;
+  }
+  header {
+    max-width: 1200px;
+    margin: 0 auto 32px;
+    text-align: center;
+  }
+  h1 { font-size: 1.8rem; font-weight: 700; }
+  .subtitle { color: var(--muted); margin-top: 6px; font-size: 0.95rem; }
+  .updated { color: var(--accent); font-size: 0.85rem; margin-top: 8px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto 32px;
+  }
+  .section-title {
+    max-width: 1200px;
+    margin: 32px auto 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .card:hover { transform: translateY(-2px); border-color: #3a4048; }
+  .card h3 { font-size: 0.9rem; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+  .value {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin: 4px 0;
+  }
+  .unit { font-size: 1rem; font-weight: 500; color: var(--muted); }
+  .meta { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+  .source { font-size: 0.75rem; color: var(--accent); margin-top: 10px; }
+  .source a { color: var(--accent); text-decoration: none; }
+  .source a:hover { text-decoration: underline; }
+  .live-badge {
+    display: inline-block;
+    background: rgba(0, 186, 124, 0.15);
+    color: var(--green);
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+    font-weight: 600;
+  }
+  .static-badge {
+    display: inline-block;
+    background: rgba(255, 212, 0, 0.15);
+    color: var(--yellow);
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+    font-weight: 600;
+  }
+  footer {
+    max-width: 1200px;
+    margin: 48px auto 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  .loading { opacity: 0.5; }
+  @media (max-width: 600px) {
+    .value { font-size: 1.6rem; }
+    h1 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Indicadores do Brasil</h1>
+  <p class="subtitle">Principais dados econômicos, sociais e ambientais em um só lugar</p>
+  <p class="updated" id="lastUpdate">Carregando dados ao vivo...</p>
+</header>
+
+<div class="section-title">Econômicos (ao vivo quando possível)</div>
+<div class="grid" id="economicGrid">
+  <div class="card" id="card-dolar">
+    <h3>Dólar (PTAX venda) <span class="live-badge">AO VIVO</span></h3>
+    <div class="value loading" id="val-dolar">—</div>
+    <div class="meta" id="meta-dolar"></div>
+    <div class="source"><a href="https://www.bcb.gov.br/estabilidadefinanceira/historicocotacoes" target="_blank">Fonte: Banco Central (SGS 1)</a></div>
+  </div>
+  <div class="card" id="card-selic">
+    <h3>Selic (meta) <span class="live-badge">AO VIVO</span></h3>
+    <div class="value loading" id="val-selic">—</div>
+    <div class="meta" id="meta-selic"></div>
+    <div class="source"><a href="https://www.bcb.gov.br/controleinflacao/taxaselic" target="_blank">Fonte: Banco Central (SGS 432)</a></div>
+  </div>
+  <div class="card" id="card-ipca">
+    <h3>IPCA (12 meses) <span class="live-badge">AO VIVO</span></h3>
+    <div class="value loading" id="val-ipca">—</div>
+    <div class="meta" id="meta-ipca"></div>
+    <div class="source"><a href="https://www.ibge.gov.br/estatisticas/economicas/precos-e-custos/9256-indice-nacional-de-precos-ao-consumidor-amplo.html" target="_blank">Fonte: IBGE via BCB (SGS 13522)</a></div>
+  </div>
+  <div class="card">
+    <h3>Desemprego (PNAD Contínua) <span class="static-badge">ÚLTIMA DIVULGAÇÃO</span></h3>
+    <div class="value">5,3%</div>
+    <div class="meta">Trimestre móvel · ~jul/ago 2026</div>
+    <div class="source"><a href="https://www.ibge.gov.br/estatisticas/sociais/trabalho/9173-pesquisa-nacional-por-amostra-de-domicilios-continua-trimestral.html" target="_blank">Fonte: IBGE – PNAD Contínua</a></div>
+  </div>
+  <div class="card">
+    <h3>PIB (crescimento)</h3>
+    <div class="value">1,9%</div>
+    <div class="meta">Acumulado 4 trimestres · 2º tri 2026</div>
+    <div class="source"><a href="https://www.ibge.gov.br/estatisticas/economicas/contas-nacionais/9300-contas-nacionais-trimestrais.html" target="_blank">Fonte: IBGE – Contas Nacionais Trimestrais</a></div>
+  </div>
+  <div class="card">
+    <h3>Dívida bruta do governo geral</h3>
+    <div class="value">~82,9%</div>
+    <div class="meta">do PIB · ago/2026</div>
+    <div class="source"><a href="https://www.bcb.gov.br/estatisticas/notas_tecnicas" target="_blank">Fonte: Banco Central</a></div>
+  </div>
+</div>
+
+<div class="section-title">Sociais</div>
+<div class="grid">
+  <div class="card">
+    <h3>População estimada</h3>
+    <div class="value">214,2 mi</div>
+    <div class="meta">1º de julho de 2026</div>
+    <div class="source"><a href="https://www.ibge.gov.br/estatisticas/sociais/populacao/9103-estimativas-de-populacao.html" target="_blank">Fonte: IBGE – Estimativas da População</a></div>
+  </div>
+  <div class="card">
+    <h3>Taxa de alfabetização (15+)</h3>
+    <div class="value">95,1%</div>
+    <div class="meta">Analfabetismo: 4,9% · 8,4 milhões de pessoas · 2025</div>
+    <div class="source"><a href="https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/47221-analfabetismo-fica-abaixo-de-5-em-2025-mas-8-4-milhoes-ainda-nao-sabem-ler-e-escrever" target="_blank">Fonte: IBGE – PNAD Contínua Educação 2025</a></div>
+  </div>
+  <div class="card">
+    <h3>IDHM</h3>
+    <div class="value">0,805</div>
+    <div class="meta">Muito alto desenvolvimento humano · 2024</div>
+    <div class="source"><a href="https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/46897-brasil-alcanca-patamar-de-muito-alto-desenvolvimento-humano-pela-primeira-vez-mostram-dados-do-radar-idhm-2024-com-participacao-do-ibge" target="_blank">Fonte: PNUD / IBGE – Radar IDHM 2024</a></div>
+  </div>
+  <div class="card">
+    <h3>Pobreza</h3>
+    <div class="value">23,1%</div>
+    <div class="meta">Extrema pobreza: 3,5% · 2024</div>
+    <div class="source"><a href="https://www.ibge.gov.br/estatisticas/sociais/saude/9221-sintese-de-indicadores-sociais.html" target="_blank">Fonte: IBGE – Síntese de Indicadores Sociais</a></div>
+  </div>
+  <div class="card">
+    <h3>Índice de Gini</h3>
+    <div class="value">0,504</div>
+    <div class="meta">2024 (menor da série recente)</div>
+    <div class="source"><a href="https://www.ibge.gov.br/estatisticas/sociais/saude/9221-sintese-de-indicadores-sociais.html" target="_blank">Fonte: IBGE</a></div>
+  </div>
+  <div class="card">
+    <h3>Expectativa de vida</h3>
+    <div class="value">76,6 anos</div>
+    <div class="meta">Dados recentes IBGE</div>
+    <div class="source"><a href="https://www.ibge.gov.br/estatisticas/sociais/populacao/9109-projecao-da-populacao.html" target="_blank">Fonte: IBGE</a></div>
+  </div>
+</div>
+
+<div class="section-title">Ambiental</div>
+<div class="grid">
+  <div class="card">
+    <h3>Desmatamento na Amazônia (Prodes)</h3>
+    <div class="value">3.335 km²</div>
+    <div class="meta">Ago/2025 – jul/2026 · Menor da série histórica desde 1988</div>
+    <div class="source"><a href="https://www.gov.br/inpe/pt-br" target="_blank">Fonte: INPE – Prodes</a></div>
+  </div>
+</div>
+
+<footer>
+  Dados econômicos ao vivo via API pública do Banco Central do Brasil (SGS).<br>
+  Demais indicadores refletem a última divulgação oficial das fontes citadas.<br>
+  Atualizado em <span id="footerDate"></span>.
+</footer>
+
+<script>
+async function fetchSGS(code) {
+  const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${code}/dados/ultimos/1?formato=json`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const data = await res.json();
+  return data[0];
+}
+
+function formatDate(brDate) {
+  // "26/10/2026" → nicer
+  return brDate;
+}
+
+async function loadLive() {
+  const now = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  document.getElementById('footerDate').textContent = now;
+
+  try {
+    // Dólar (1)
+    const dolar = await fetchSGS(1);
+    document.getElementById('val-dolar').textContent = 'R$ ' + parseFloat(dolar.valor).toFixed(4).replace('.', ',');
+    document.getElementById('meta-dolar').textContent = 'Data: ' + dolar.data;
+    document.getElementById('val-dolar').classList.remove('loading');
+
+    // Selic meta (432)
+    const selic = await fetchSGS(432);
+    document.getElementById('val-selic').innerHTML = parseFloat(selic.valor).toFixed(2).replace('.', ',') + '<span class="unit">% a.a.</span>';
+    document.getElementById('meta-selic').textContent = 'Vigente desde: ' + selic.data;
+    document.getElementById('val-selic').classList.remove('loading');
+
+    // IPCA 12 meses (13522)
+    const ipca = await fetchSGS(13522);
+    document.getElementById('val-ipca').innerHTML = parseFloat(ipca.valor).toFixed(2).replace('.', ',') + '<span class="unit">%</span>';
+    document.getElementById('meta-ipca').textContent = 'Referência: ' + ipca.data;
+    document.getElementById('val-ipca').classList.remove('loading');
+
+    document.getElementById('lastUpdate').textContent = 'Dados ao vivo atualizados agora · ' + now;
+  } catch (e) {
+    console.error(e);
+    document.getElementById('lastUpdate').textContent = 'Não foi possível carregar dados ao vivo (possível bloqueio de CORS). Valores estáticos abaixo.';
+    // Fallbacks
+    document.getElementById('val-dolar').textContent = 'R$ 5,5007';
+    document.getElementById('meta-dolar').textContent = 'Último conhecido: 26/10/2026';
+    document.getElementById('val-selic').innerHTML = '13,75<span class="unit">% a.a.</span>';
+    document.getElementById('meta-selic').textContent = 'Meta atual';
+    document.getElementById('val-ipca').innerHTML = '4,58<span class="unit">%</span>';
+    document.getElementById('meta-ipca').textContent = '12 meses até set/2026';
+    ['val-dolar','val-selic','val-ipca'].forEach(id => document.getElementById(id).classList.remove('loading'));
+  }
+}
+
+loadLive();
+</script>
+</body>
+</html>
